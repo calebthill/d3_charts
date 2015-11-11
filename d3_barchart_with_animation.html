@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  </head>
+  <body>
+
+    <style>
+
+    .chart rect {
+      fill: #44B1DD;
+    }
+
+    rect:hover {
+      fill: #E7E958;
+    }
+
+    .chart text {
+      fill: white;
+      font: 10px sans-serif;
+      text-anchor: end;
+    }
+
+    .axis text {
+      font: 10px sans-serif;
+      fill: black;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: lightgrey;
+      shape-rendering: crispEdges;
+    }
+
+    .grid .tick {
+      stroke: lightgrey;
+      opacity: 0.6;
+    }
+
+    .grid path {
+      stroke-width: 0;
+    }
+
+    </style>
+    <svg class="chart"></svg>
+    <script>
+
+    var data = [
+      {name: "A",    value:  4},
+      {name: "B",    value:  8},
+      {name: "C",    value: 15},
+      {name: "D",    value: 16},
+      {name: "E",    value: 23},
+      {name: "F",    value: 42},
+      {name: "G",    value: 10},
+      {name: "H",    value: 20},
+      {name: "I",    value: 44},
+      {name: "J",    value: 34},
+      {name: "K",    value: 42},
+      {name: "L",    value: 30},
+      {name: "M",    value: 14},
+      {name: "N",    value: 12},
+      {name: "O",    value: 20},
+      {name: "P",    value: 44},
+      {name: "Q",    value: 50},
+      {name: "R",    value: 80},
+      {name: "S",    value: 45},
+      {name: "T",    value: 44},
+      {name: "U",    value: 12},
+      {name: "V",    value: 20},
+      {name: "W",    value: 29},
+      {name: "X",    value: 19},
+      {name: "AA",   value: 45},
+      {name: "BB",   value: 44},
+      {name: "CC",   value: 12},
+      {name: "DD",   value: 20},
+      {name: "EE",   value: 29},
+      {name: "FF",   value: 19}
+    ];
+
+    var margin = {top: 20, right: 30, bottom: 30, left: 40},
+        width = 960 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+
+    // The rangeBands method computes range values so as to divide the chart 
+    // area into evenly-spaced,evenly-sized bands, as in a bar chart.
+    var x = d3.scale.ordinal()
+        .domain(data.map(function(d) { return d.name; }))
+        .rangeRoundBands([0, width], 0.1);
+
+    var y = d3.scale.linear()
+        .range([height, 0])
+        .domain([0, d3.max(data, function(d) { return d.value; })]);
+
+    // ADDING FUNCTIONS FOR THE X AND Y AXIS
+    function createXAxis() {
+      return d3.svg.axis()
+          .scale(x)
+          .orient("bottom")
+          .ticks(5);
+    }
+
+    function createYAxis() {
+      return d3.svg.axis()
+          .scale(y)
+          .orient("left")
+          .ticks(10);
+    }
+
+    var chart = d3.select(".chart")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+    var bar = chart.selectAll("g")
+        .data(data)
+      .enter().append("g")
+        .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
+
+
+    chart.append("g")
+      .transition()
+        .delay(data.length * 150)
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(createXAxis());
+
+    chart.append("g")
+        .attr("class", "y axis")
+      .call(createYAxis())
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Frequency");
+
+    // This commented out code is for the vertical grid, which I dont think I
+    // need because it's a bar chart. If it was a line graph I would use it. 
+
+    // chart.append("g")
+    //     .attr("class", "grid")
+    //     .attr("transform", "translate(0," + height + ")")
+    //     .call(createXAxis()
+    //       .tickSize(-height, 0, 0)
+    //       .tickFormat("")
+    //     );
+
+    // Horizontal grid...
+    chart.append("g")
+        .attr("class", "grid")
+        .call(createYAxis()
+          .tickSize(-width, 0, 0)
+          .tickFormat("")
+        );
+
+    bar.append("rect")
+        .attr("y", height)
+        .attr("height", 0)
+        .attr("width", 1)
+        .transition()
+          .delay(function (d, i){ return i * 150; })
+          .duration(800)
+          .attr("height", function(d) { return height - y(d.value); })
+          .attr("y", function(d) { return y(d.value); })
+        .transition()
+          .delay(data.length * 175)
+          .attr("width", x.rangeBand());
+
+
+    bar.append("text")
+      .transition()
+        .delay(data.length * 150)
+        .attr("x", x.rangeBand() / 2)
+        .attr("y", function(d) { return y(d.value) + 3; })
+        .attr("dy", ".75em")
+        .text(function(d) { return d.value; });
+
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+<head>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.1.6.min.js"></script>
+</head>
+<body>
+  <script type="text/javascript">
+    var svg = dimple.newSvg("body", 1200, 600);
+    var data = [
+      { "hospital":"St. Jude", "Lives saved":317 },
+      { "hospital":"St. Thomas", "Lives saved":610 },
+      { "hospital":"Blue cross", "Lives saved":500 },
+      { "hospital":"Williams Marry", "Lives saved":150 },
+      { "hospital":"Mount Sinai Doctors - Chinatown", "Lives saved":221 },
+      { "hospital":"Lenox Hill Hospital", "Lives saved":342 },
+      { "hospital":"Gouverneur Health Medical Center", "Lives saved":67 },
+      { "hospital":"Queens Hospital Center", "Lives saved":59 }
+    ];
+    var chart = new dimple.chart(svg, data);
+    chart.addCategoryAxis("y", "hospital");
+    chart.addMeasureAxis("x", "Lives saved");
+    chart.addSeries(null, dimple.plot.bubble);
+    chart.draw();
+  </script>
+</body>
